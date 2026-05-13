@@ -1,111 +1,116 @@
-# Deteksi APD Real-time dengan YOLOv8
+```markdown
+# Sistem Deteksi Pelanggaran K3 Berbasis Edge Computing
 
-Proyek ini menggunakan **YOLOv8** untuk mendeteksi penggunaan **Alat Pelindung Diri (APD)** secara **real-time** melalui webcam.
-Cocok untuk pemantauan keselamatan di **pabrik, gudang, dan area konstruksi.**
+![Python Version](https://img.shields.io/badge/Python-3.9%2B-blue)
+![Ultralytics YOLO](https://img.shields.io/badge/YOLO-v11-orange)
+![Streamlit](https://img.shields.io/badge/Streamlit-Deployment-red)
+![MLflow](https://img.shields.io/badge/MLflow-Tracking-lightgrey)
+
+Proyek ini merupakan implementasi Computer Vision ujung-ke-ujung untuk mendeteksi kepatuhan penggunaan Alat Pelindung Diri pada lingkungan kerja konstruksi dan industri. Sistem ini dirancang secara ringan menggunakan arsitektur **YOLOv11 Nano** agar dapat diimplementasikan pada perangkat Edge Devices seperti NVIDIA Jetson Orin Nano.
 
 ---
 
 ## Fitur Utama
 
-* **Deteksi Real-time:** Analisis langsung dari webcam.
-* **Multi-Platform:** Berjalan di Windows & Linux.
-* **GPU Acceleration:** Dukungan CUDA untuk performa optimal.
-* **Kelas yang Dideteksi:**
+1. **Live Stream:** Inferensi video langsung dari kamera pengawas dengan kalkulasi *Frames Per Second* (FPS) dinamis.
+2. **Analisis Gambar Statis:** Deteksi objek pada foto dengan ekstraksi data ke dalam format tabel analitik.
+3. **Penyimpanan Bukti Otomatis:** Sistem dibekali logika *auto-save* yang akan secara otomatis mengambil dan menyimpan tangkapan layar jika mendeteksi pekerja tanpa APD lengkap.
+4. **Dasboard Interaktif:** Antarmuka pengguna berbasis web modern tanpa memerlukan konfigurasi kode manual saat operasional.
+5. **Manajemen Eksperimen (MLOps):** Terintegrasi dengan MLflow dan basis data SQLite untuk pelacakan metrik pelatihan dan manajemen versi model.
 
-  * 👷 Person
-  * ⛑️ Hardhat
-  * 🦺 Vest
-  * 😷 Mask
-  * 🧤 Gloves
+**Kategori Deteksi:**
+`person` | `helmet` | `vest` | `no-helmet` | `no-vest`
 
 ---
 
-## Prasyarat
+## Teknologi yang Digunakan
 
-### Dataset
-[Unduh Dataset](https://www.kaggle.com/datasets/shlokraval/ppe-dataset-yolov8/data)
+- **Model Inferensi:** Ultralytics YOLOv11n
+- **Antarmuka Web:** Streamlit, Pandas
+- **Pemrosesan Gambar:** OpenCV, NumPy, Pillow, Albumentations (Augmentasi)
+- **Pelacakan (Tracking):** MLflow, Pyngrok
 
-### Umum
+---
 
-* Python **3.9+**
-* Git
-* NVIDIA GPU (disarankan ≥ 6 GB VRAM)
+## Persyaratan Sistem
 
-### Windows
+- Sistem Operasi: Linux (Disarankan Arch/EndeavourOS) atau Windows
+- Python 3.9 atau lebih baru
+- NVIDIA GPU dengan dukungan CUDA (VRAM Minimal 4GB direkomendasikan untuk training)
 
-1. **Driver NVIDIA** → [Unduh di sini](https://www.nvidia.com/Download/index.aspx)
-2. **CUDA Toolkit 12.1** → [Unduh di sini](https://developer.nvidia.com/cuda-downloads)
-3. **cuDNN** → [Unduh di sini](https://developer.nvidia.com/cudnn)
-
-   > Ekstrak dan salin folder `bin`, `include`, dan `lib` ke direktori instalasi CUDA (`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.1`).
-
-### Linux (Arch & Turunannya)
-
+**Persyaratan Khusus Linux (Arch):**
+Pastikan driver CUDA dan cuDNN telah terinstal.
 ```bash
 sudo pacman -S nvidia-dkms nvidia-utils cuda cudnn
-sudo reboot
-nvidia-smi
+
 ```
 
 ---
 
 ## Instalasi
 
-1. **Clone Repositori**
-
-   ```bash
-   git clone https://github.com/Magang-API/K3_DETECTION_YOLOV8
-   cd K3_DETECTION_YOLOV8
-   ```
-
-2. **Buat Virtual Environment**
-
-   ```bash
-   python -m venv venv
-   ```
-
-   * Windows: `venv\Scripts\activate`
-   * Linux: `source venv/bin/activate`
-
-3. **Instal Dependensi**
-
-   ```bash
-   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-   pip install -r requirements.txt
-   ```
-
-   > *Pastikan `requirements.txt` berisi `ultralytics` dan `opencv-python`.*
-
----
-
-## Training Model
-
-Jika ingin melatih ulang model dengan dataset sendiri:
+**1. Kloning Repository**
 
 ```bash
-python train.py
-```
-
-Model terbaik akan tersimpan di:
+git clone [https://github.com/shitodcy/K3_DETECTION_YOLOV11_new/.git]
 
 ```
-runs/detect/NAMA_TRAINING/weights/best.pt
+
+**2. Pembuatan Lingkungan Virtual (Virtual Environment)**
+
+```bash
+python -m venv venv
+source venv/bin/activate  # Untuk Linux/MacOS
+# venv\Scripts\activate   # Untuk Windows
+
+```
+
+**3. Instalasi Dependensi**
+
+```bash
+pip install torch torchvision torchaudio --index-url [https://download.pytorch.org/whl/cu121](https://download.pytorch.org/whl/cu121)
+pip install ultralytics streamlit pandas opencv-python numpy Pillow mlflow pyngrok albumentations
+
 ```
 
 ---
 
-## Deteksi Real-time
+## Panduan Penggunaan
 
-1. Buka file `predict_webcam.py`
-2. Ubah variabel:
+Sistem ini memiliki dua komponen utama yang dapat dijalankan secara terpisah: **Dasboard Aplikasi** untuk pengguna akhir dan **Server MLflow** untuk pengembang.
 
-   ```python
-   MODEL_PATH = 'runs/detect/yolov8n_ppe_custom4/weights/best.pt'
-   ```
-3. Jalankan deteksi:
+### A. Menjalankan Dasboard Utama (Streamlit)
 
-   ```bash
-   python predict_webcam.py
-   ```
+Ini adalah antarmuka operasional yang akan digunakan oleh divisi K3/Keamanan di lapangan.
 
-   Tekan **q** untuk keluar.
+1. Buka terminal di dalam direktori proyek.
+2. Jalankan perintah berikut:
+
+```bash
+streamlit run app.py
+
+```
+
+3. Akses dasboard melalui peramban pada alamat lokal yang tertera (umumnya `http://localhost:8501`).
+
+### B. Menjalankan Pelacakan MLflow (Opsional untuk Pengembangan)
+
+Gunakan komponen ini jika Anda ingin melihat grafik performa dari pelatihan model yang telah dilakukan.
+
+1. Pastikan Anda memiliki file `mlflow.db` di direktori proyek.
+2. Jalankan server MLflow:
+
+```bash
+mlflow server --backend-store-uri sqlite:///mlflow.db --port 5000
+
+```
+
+3. Buka `http://localhost:5000` di peramban untuk mengakses grafik akurasi (*Precision, Recall, mAP*) dan artifak model.
+
+---
+
+## Catatan Konfigurasi
+
+* **Penyesuaian Path Model:** Pastikan variabel `MODEL_PATH` di dalam file `app.py` mengarah ke file bobot model terbaik Anda (`best.pt`).
+* **Penyesuaian Dataset:** Proyek ini mengambil dataset dari Roboflow 100 (*Construction Safety*). Konfigurasi API *key* dan pra-pemrosesan diatur melalui format buku kerja (`.ipynb`).
+```
