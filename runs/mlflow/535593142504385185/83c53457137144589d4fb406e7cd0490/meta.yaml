@@ -1,0 +1,14 @@
+artifact_uri: /home/azunya/Documents/kuliah/sem6/matkul/data mining/project/K3_DETECTION_YOLOV11-new/runs/mlflow/535593142504385185/83c53457137144589d4fb406e7cd0490/artifacts
+end_time: 1778603085293
+entry_point_name: ''
+experiment_id: '535593142504385185'
+lifecycle_stage: active
+run_id: 83c53457137144589d4fb406e7cd0490
+run_name: yolov11n_run-5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778600358000
+status: 3
+tags: []
+user_id: azunya
