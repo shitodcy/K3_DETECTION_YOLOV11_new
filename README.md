@@ -1,4 +1,4 @@
-```markdown
+
 # Sistem Deteksi Pelanggaran K3 Berbasis Edge Computing
 
 ![Python Version](https://img.shields.io/badge/Python-3.9%2B-blue)
@@ -9,7 +9,7 @@
 Proyek ini merupakan implementasi Computer Vision ujung-ke-ujung untuk mendeteksi kepatuhan penggunaan Alat Pelindung Diri pada lingkungan kerja konstruksi dan industri. Sistem ini dirancang secara ringan menggunakan arsitektur **YOLOv11 Nano** agar dapat diimplementasikan pada perangkat Edge Devices seperti NVIDIA Jetson Orin Nano.
 
 ---
-
+```markdown
 ## Fitur Utama
 
 1. **Live Stream:** Inferensi video langsung dari kamera pengawas dengan kalkulasi *Frames Per Second* (FPS) dinamis.
